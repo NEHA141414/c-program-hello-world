@@ -1,1 +1,143 @@
-https://nextleap.app/online-compiler/c-programming/l7m88algy
+// Online C compiler to run C program online
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX 100  // maximum stack size
+
+typedef struct {
+    int data[MAX];
+    int top;      // index of the top element (-1 when empty)
+} Stack;
+
+// Initialize the stack
+void init(Stack *s) {
+    s->top = -1;
+}
+
+// Check if stack is empty
+int isEmpty(Stack *s) {
+    return s->top == -1;
+}
+
+// Check if stack is full
+int isFull(Stack *s) {
+    return s->top == MAX - 1;
+}
+
+// Push an element onto the stack
+int push(Stack *s, int value) {
+    if (isFull(s)) {
+        return 0; // failure
+    }
+    s->data[++(s->top)] = value;
+    return 1; // success
+}
+
+// Pop the top element from the stack
+int pop(Stack *s, int *out) {
+    if (isEmpty(s)) {
+        return 0; // failure
+    }
+    *out = s->data[(s->top)--];
+    return 1; // success
+}
+
+// Peek at the top element
+int peek(Stack *s, int *out) {
+    if (isEmpty(s)) {
+        return 0;
+    }
+    *out = s->data[s->top];
+    return 1;
+}
+
+// Get current size
+int size(Stack *s) {
+    return s->top + 1;
+}
+
+// Display all elements
+void display(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty.\n");
+        return;
+    }
+    printf("Stack (top -> bottom): ");
+    for (int i = s->top; i >= 0; --i) {
+        printf("%d ", s->data[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Stack s;
+    init(&s);
+
+    int choice, value, ok;
+
+    while (1) {
+        printf("\n==== STACK MENU ====\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Peek\n");
+        printf("4. Display\n");
+        printf("5. Size\n");
+        printf("0. Exit\n");
+        printf("Enter choice: ");
+        if (scanf("%d", &choice) != 1) {
+            // Handle non-numeric input gracefully
+            printf("Invalid input. Exiting.\n");
+            break;
+        }
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to push: ");
+                if (scanf("%d", &value) != 1) {
+                    printf("Invalid value.\n");
+                    // Clear stdin in case of bad input
+                    int c; while ((c = getchar()) != '\n' && c != EOF);
+                    break;
+                }
+                ok = push(&s, value);
+                if (ok) printf("Pushed %d.\n", value);
+                else   printf("Stack overflow! (MAX=%d)\n", MAX);
+                break;
+
+            case 2: {
+                int popped;
+                ok = pop(&s, &popped);
+                if (ok) printf("Popped %d.\n", popped);
+                else    printf("Stack underflow! The stack is empty.\n");
+                break;
+            }
+
+            case 3: {
+                int topVal;
+                ok = peek(&s, &topVal);
+                if (ok) printf("Top element: %d\n", topVal);
+                else    printf("Stack is empty.\n");
+                break;
+            }
+
+            case 4:
+                display(&s);
+                break;
+
+            case 5:
+                printf("Current size: %d\n", size(&s));
+                break;
+
+            case 0:
+                printf("Goodbye!\n");
+                return 0;
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
+
